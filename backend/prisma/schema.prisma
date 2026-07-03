@@ -1,0 +1,175 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                 Int               @id @default(autoincrement())
+  email              String            @unique
+  password           String
+  name               String
+  age                Int?
+  gender             String?           // MALE, FEMALE, OTHER
+  height             Float?            // in cm
+  weight             Float?            // in kg
+  activityLevel      String?           // SEDENTARY, LIGHTLY_ACTIVE, MODERATELY_ACTIVE, VERY_ACTIVE, EXTRA_ACTIVE
+  goal               String?           // LOSE_WEIGHT, GAIN_MUSCLE, MAINTAIN_WEIGHT, INCREASE_STRENGTH, IMPROVE_ENDURANCE, CUSTOM
+  targetWeight       Float?            // in kg
+  profilePic         String?           // Image path/URL
+  role               String            @default("USER") // USER, ADMIN
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  workouts           Workout[]
+  meals              Meal[]
+  waterLogs          WaterLog[]
+  progressLogs       ProgressLog[]
+  goals              Goal[]
+  chatHistory        AIChatHistory[]
+  notifications      Notification[]
+  stepsLogs          StepsLog[]
+}
+
+model Workout {
+  id             Int               @id @default(autoincrement())
+  userId         Int
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String            // e.g. "Morning Cardio" or "Leg Day"
+  date           DateTime          @default(now())
+  completed      Boolean           @default(false)
+  notes          String?
+  duration       Int?              // total duration in minutes
+  caloriesBurned Int?              // total estimated calories burned
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  
+  exercises      WorkoutExercise[]
+}
+
+model WorkoutExercise {
+  id             Int      @id @default(autoincrement())
+  workoutId      Int
+  workout        Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exerciseId     Int?     // link to exercise library if matched
+  exercise       Exercise? @relation(fields: [exerciseId], references: [id], onDelete: SetNull)
+  exerciseName   String   // fallback if deleted or custom
+  muscleGroup    String
+  sets           Int
+  reps           Int
+  weight         Float    // weight in kg
+  restTime       Int?     // rest time in seconds
+  notes          String?
+}
+
+model Exercise {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique
+  description     String
+  muscleGroup     String            // Chest, Back, Legs, Shoulders, Arms, Core, Cardio, Full Body
+  difficulty      String            // BEGINNER, INTERMEDIATE, ADVANCED
+  equipment       String            // Barbells, Dumbbells, Machine, Bodyweight, Cable, etc.
+  image           String?
+  videoUrl        String?
+  instructions    String            // newline separated or text
+  isCustom        Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  
+  workoutExercises WorkoutExercise[]
+}
+
+model Meal {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  type      String   // BREAKFAST, LUNCH, DINNER, SNACK
+  createdAt DateTime @default(now())
+  
+  foods     Food[]
+}
+
+model Food {
+  id       Int    @id @default(autoincrement())
+  mealId   Int
+  meal     Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  name     String
+  calories Float  // in kcal
+  protein  Float  // in g
+  carbs    Float  // in g
+  fat      Float  // in g
+  fiber    Float  // in g
+}
+
+model WaterLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  amount    Int      // in ml (e.g. 250, 500, etc.)
+  createdAt DateTime @default(now())
+}
+
+model ProgressLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date       DateTime @default(now())
+  weight     Float    // in kg
+  bodyFat    Float?   // percentage
+  muscleMass Float?   // in kg
+  waist      Float?   // in cm
+  chest      Float?   // in cm
+  arms       Float?   // in cm
+  thighs     Float?   // in cm
+  createdAt  DateTime @default(now())
+}
+
+model Goal {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         String    // LOSE_WEIGHT, GAIN_MUSCLE, MAINTAIN_WEIGHT, INCREASE_STRENGTH, IMPROVE_ENDURANCE, CUSTOM
+  targetValue  Float     // numeric target (e.g. target weight or workout count)
+  currentValue Float     @default(0.0)
+  description  String?
+  startDate    DateTime  @default(now())
+  endDate      DateTime?
+  status       String    @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, ABANDONED
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model AIChatHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String   // USER, MODEL
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  message       String
+  type          String    // WORKOUT, WATER, MEAL, SLEEP, GENERAL
+  read          Boolean   @default(false)
+  scheduledTime DateTime?
+  createdAt     DateTime  @default(now())
+}
+
+model StepsLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  steps     Int
+  createdAt DateTime @default(now())
+}
+

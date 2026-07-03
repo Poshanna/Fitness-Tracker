@@ -1,0 +1,27 @@
+# Dependency directories
+node_modules/
+
+# Local databases (SQLite)
+*.db
+*.db-journal
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+logs/
+*.log
+
+# Build files
+dist/
+build/
+
+# IDE / Editor folders
+.vscode/
+.idea/
+.DS_Store
