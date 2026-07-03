@@ -1,5 +1,11 @@
 # AegisFit - AI-Powered Fitness Tracker (Full-Stack)
 
+### 🚀 Live Deployments
+- 🌐 **Live Web Application (Vercel)**: [https://fitness-tracker-bice-zeta.vercel.app/](https://fitness-tracker-bice-zeta.vercel.app/)
+- ⚙️ **Production API Backend (Render)**: [https://fitness-tracker-backend-mfcl.onrender.com/](https://fitness-tracker-backend-mfcl.onrender.com/)
+
+---
+
 AegisFit is a production-ready, premium full-stack web application designed for tracking workouts, nutrition macros, water intake, daily steps, and biometrics. It incorporates a professional dark/light theme, custom Recharts analytics, and an integrated AI Coach powered by the Google Gemini API (with robust offline mockup fallbacks).
 
 ---
