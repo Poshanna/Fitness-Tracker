@@ -1,4 +1,4 @@
-# AegisFit - AI-Powered Fitness Tracker (Full-Stack)
+# AegisFit - Fitness Management Platform
 
 ### 🚀 Live Deployments
 - 🌐 **Live Web Application (Vercel)**: [https://fitness-tracker-bice-zeta.vercel.app/](https://fitness-tracker-bice-zeta.vercel.app/)
